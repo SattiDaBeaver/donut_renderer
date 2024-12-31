@@ -54,7 +54,7 @@ int main(int argc, char* argv[]){
         }
 
         A += 0.1;
-        B += 0.07;
+        B += 0.04;
 
         if (A >= 2 * M_PI){
             A = 0;

@@ -36,7 +36,7 @@ class Donut{
         }
 
         static char get_char(float lum){
-            int x = round(-lum*5 + 6);
+            int x = (int)(-lum*6 + 6);
             return ".,-~:;=!*#$@"[x];
         }
 };

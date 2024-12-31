@@ -5,19 +5,25 @@
 
 #include "donut.h"
 
-#define WIDTH 60
-#define LENGTH 25
+#define WIDTH 70
+#define LENGTH 30
 #define FOCAL 10
 
-#define CONV (M_PI)/180
+#define X_ROTATION 0.08
+#define Y_ROTATION 0.03
+
+#define INC_THETA 0.08
+#define INC_PHI 0.08
+
+#define TIME_PER_FRAME 25
 
 using namespace std;
 
 int main(int argc, char* argv[]){
     cout.sync_with_stdio(false);
     // declare variables
-    const float inner_R = 7;
-    const float outer_R = 18;
+    const float inner_R = 10;
+    const float outer_R = 22;
     const float y_donut = 0;
 
     float A = 0;
@@ -36,8 +42,8 @@ int main(int argc, char* argv[]){
         }  
 
         // populate frame buffer
-        for (float theta = 0; theta < 2 * M_PI; theta += 0.02){
-            for (float phi = 0; phi < 2 * M_PI; phi += 0.02){
+        for (float theta = 0; theta < 2 * M_PI; theta += INC_THETA){
+            for (float phi = 0; phi < 2 * M_PI; phi += INC_PHI){
                 float sinT = sin(theta);
                 float cosT = cos(theta);
                 float sinP = sin(phi);
@@ -48,13 +54,15 @@ int main(int argc, char* argv[]){
                 float lum = Donut::luminance(sinT, cosT, sinP, cosP, light_vec);
                 p.convert();
                 Donut::project(p, FOCAL);
-
-                frame[(int)round(p.x + LENGTH / 2)][(int)round(p.z + WIDTH / 2)] = Donut::get_char(lum);
+                int x = round(p.x + LENGTH / 2);
+                int y = round(p.z + WIDTH / 2);
+                if (frame[x][y] == ' ')
+                    frame[x][y] = Donut::get_char(lum);
             }
         }
 
-        A += 0.1;
-        B += 0.04;
+        A += X_ROTATION;
+        B += Y_ROTATION;
 
         if (A >= 2 * M_PI){
             A = 0;
@@ -74,7 +82,7 @@ int main(int argc, char* argv[]){
 
         cout << endl;
 
-        this_thread::sleep_for(chrono::milliseconds(5));
+        this_thread::sleep_for(chrono::milliseconds(TIME_PER_FRAME));
     }
     return 0;
 }
